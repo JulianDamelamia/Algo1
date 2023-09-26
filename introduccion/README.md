@@ -55,7 +55,20 @@ $ java MiPrograma
 Deberías ver la salida "¡Hola, Mundo!" en la terminal.
 
 ## Estructura de Archivos y Paquetes
-En Java, los programas se organizan en clases y se agrupan en **paquetes**. La estructura de archivos y carpetas debe coincidir con la estructura de paquetes. Por ejemplo, si tienes una clase llamada MiClase en el paquete com.miorganizacion, la estructura de carpetas debería ser:
+
+### Organización de _tipos_
+En Java, los programas se organizan definiendo **tipos**. Cuando hablamos de _tipos_ en Java nos referimos a:
+- Clases
+- Interfaces
+- Enumerables
+- Anotaciones (_annotation types_)
+
+Cada _tipo_ se implementa con su código fuente en su propio archivo **.java** y es conveniente que se defina un único tipo por archivo. El archivo _.java_ llevará el nombre del _tipo_ que tiene implementado. Por ejemplo si definimos una clase _MiClase_, deberíamos guardarla en un archivo _MiClase.java_. Si queremos implementar más de un _tipo_ en un mismo archivo (no se aconseja esta práctica), sólo uno puede ser público y será el que le da nombre al archivo.
+
+### Paquetes
+Los _tipos_ relacionados pueden agruparse en **paquetes** para facilitar la organización. Un _paquete_ puede contener un conjunto de _tipos_, pero cada _tipo_ puede pertenecer a un único _paquete_.
+
+En la mayoría de las plataformas Java, la estructura de archivos y carpetas en el _filesystem_ debe coincidir con los componentes de paquetes. Cada componente, el identificador separado con punto (.), se representa con una carpeta en el sistema. Por ejemplo, si tenemos una clase llamada MiClase en el paquete _com.miorganizacion_, la estructura de carpetas debería ser:
 
 ```bash
 mi-proyecto/
@@ -65,10 +78,14 @@ mi-proyecto/
                 MiClase.java
 ```
 
-Esta estructura de archivos y paquetes ayuda a organizar y gestionar proyectos Java más grandes y complejos. Para agregar una clase a un paquete se define en su primera línea cuál es el nombre del paquete al cual pertenece con el operador **package**.
+Esta estructura de archivos y paquetes ayuda a organizar y gestionar proyectos Java más grandes y complejos. En general, cuando armamos un proyecto Java tendremos una carpeta _src_ donde se colocan todos los archivos de código fuente (_.java_) distribuidos en carpetas. En el ejemplo previo, podemos decir que tenemos un paquete _com.miorganizacion_ que contiene una clase _MiClase_.
+
+Es importante aclarar que por más que la estructura de carpetas y archivos producen una idea de jerarquía de paquetes, en realidad para Java no existe esta relación. Un paquete _com.miorganizacion.modulo1_, no está incluido en el paquete _com.miorganizacion_, sino que ambos serían paquetes distintos y sin relación. Sólo comparten el prefijo del nombre que le damos para facilitar la idea de agrupación jerárquica en nuestra aplicación.
+
+Para agregar una clase a un paquete se define en su primera línea cuál es el nombre del paquete al cual pertenece con el operador **package**.
  
 ```java
-package miPaquete;
+package com.miorganizacion;
 
 class MiClase {
     ...
@@ -77,7 +94,7 @@ class MiClase {
 
 ### Ejercicio: Crear un paquete
 
-Incorporá el programa HolaMundo en un paquete llamado _introduccion_ y probá el proceso completo de compilarlo y ejecutarlo.
+Incorporá el programa HolaMundo en un paquete llamado _introduccion_ y probá el proceso completo de compilarlo y ejecutarlo. Para lograrlo deberás contemplar que la estructura de archivos sea consistente con esta modificación (el archivo _MiPrograma.java_ debería ahora incluirse en una carpeta _introduccion_).
 
 ### Import 
 El operador **import** es importante cuando se trabaja con clases de bibliotecas estándar de Java o definidas en otros paquetes. Se utiliza para traer miembros de otros paquetes a tu scope actual (la clase donde estás importando). Esto permite que tu código acceda y utilice las clases y tipos definidos en esos paquetes. Sin embargo, no necesitás usar import para las clases que pertenecen al mismo paquete o están en el paquete _java.lang_, ya que se importan automáticamente.
@@ -238,6 +255,28 @@ Argumento 3: argumentos
 
 En general sólo implementaremos este método en sólo una clase en nuestro programa, la cual será la clase a ejecutar.
 
+#### Argumentos variables
+
+Podemos definir un parámetro con un constructo particular (_varargs_) en un método para aceptar una cantidad de argumentos variable. Se realiza con el sufijo **...** luego del tipo de dato del parámetro, lo cual es equivalente a definir a ese parámetro como un arreglo. La ventaja de utilizar esta notación es que no debemos inicializar un arreglo para pasar como argumento al momento de invocar este método.
+
+```java
+public class Prueba {
+    public static int sumarArgumentos(Integer... args) {    // args es un Integer[]
+        int total = 0;
+        for (int i=0; i < args.length; i++) {
+            total = total + args[i];
+        }
+        return total;
+    }
+    public static void main(String[] args) {
+        int x;
+        x = sumarArgumentos(1, 2, 3);   // x = 6
+        x = sumarArgumentos(4);         // x = 4
+        x = sumarArgumentos();          // x = 0
+    }
+}
+```
+
 ### Constructores
 Los constructores en Java son **métodos especiales** que se utilizan para **inicializar** objetos de una clase. Estos métodos se llaman automáticamente cuando se crea una nueva instancia de la clase (cuando utilizamos el operador _new_, el cual realiza la **instanciación** un objeto).
 
@@ -299,6 +338,21 @@ Persona persona1 = new Persona();   // Error de compilación, porque Persona no 
 ### Ejercicio: Constructores de Libro
 Crear una clase llamada Libro con los atributos _titulo_, _autor_ y _añoPublicacion_. Definir un constructor que acepte solo el título y el autor, y establezca el añoPublicacion en el año actual (ver LocalDate.now().getYear()). Luego crear otro constructor que acepte todos los atributos (titulo, autor y añoPublicacion). Utilizar la sobrecarga de constructores para crear dos objetos Libro, uno con el año de publicación especificado y otro sin especificarlo. Mostrar los detalles de ambos libros.
 
+### Miembros de clase vs instancia
+
+Los miembros de clase y de instancia son dos tipos de **atributos** y **métodos** que se definen dentro de una clase.
+
+- **Miembros de Clase**: También conocidos como variables o métodos **estáticos**, los miembros de clase pertenecen a la clase en sí y no a las instancias individuales de la clase (objetos). Estos miembros se comparten entre todas las instancias de la clase y se pueden acceder directamente utilizando el nombre de la clase, es decir, sin la necesidad de instanciar un objeto de la clase. Para definir un atributo o método de este estilo se utiliza el modificador **static**. Por ejemplo, un atributo de clase se puede utilizar para contar cuántas instancias de la clase se han creado.
+
+- **Miembros de Instancia**: Los miembros de instancia pertenecen a las instancias individuales de una clase. Cada objeto creado a partir de esa clase tiene su propia copia de los atributos de instancia, lo que define su estado. Estos miembros se definen sin la palabra clave _static_ y se acceden a través de una instancia específica de la clase.
+
+Es importante recordar algunas consideraciones:
+- Un miembro de clase puede ser accedido directamente sin instanciar la clase y a través de cualquier instancia de la clase.
+- Si una instancia de una clase modifica el valor de un atributo de clase, el resto de las instancias de la clase verán ese cambio reflejado en ese atributo (porque se comparte entre todas las instancias, es de la clase).
+- Un método de clase puede acceder a miembros de clase, pero no a miembros de instancia.
+- Un método de instancia puede acceder tanto a miembros de instancia como de clase.
+- Sólo es posible acceder a miembros de instancia a partir de una instancia de la clase (objeto).
+
 ## Variables Primitivas y Referencias
 ### Variables Primitivas
 En Java, las variables primitivas almacenan valores simples, como números enteros, números decimales o caracteres. Estas variables ocupan una cantidad fija de memoria y almacenan directamente el valor.
@@ -318,12 +372,14 @@ boolean esMayor = true; // Variable primitiva de tipo boolean
 ```
 
 ### Variables de Referencia
-Las variables de referencia en Java almacenan direcciones de memoria donde se encuentra el objeto. En lugar de almacenar el objeto directamente, estas variables apuntan al objeto en la memoria. Estas variables se utilizan para acceder a objetos y llamar a sus métodos.
+Las variables de referencia en Java **almacenan direcciones de memoria** donde se encuentra el objeto. En lugar de almacenar el objeto directamente, estas variables apuntan al objeto en la memoria. Estas variables se utilizan para acceder a objetos y llamar a sus métodos.
 
 ```java
 Persona juana = new Persona("Juana", 25);
 ```
 En este caso, juana es una variable de referencia que apunta a un objeto de tipo Persona.
+
+> **IMPORTANTE**: Toda variable de referencia por defecto apunta a **_null_**. Por lo tanto, siempre debemos inicializarlas antes de utilizarlas, de lo contrario veremos la excepción _NullPointerException_.
 
 ### Clases Relacionadas con Variables Primitivas
 Java proporciona **clases relacionadas con variables primitivas** para realizar operaciones y proporcionar funcionalidad adicional. Estas clases están en el paquete java.lang y son parte del lenguaje de Java. Algunas de las clases relacionadas con variables primitivas son:
@@ -369,6 +425,16 @@ Crear una clase llamada _Rectangulo_ que represente un rectángulo. Esta clase d
 - Largo (double)
 - Ancho (double)
 Agregar métodos para calcular el área y el perímetro del rectángulo. Luego, crear objetos de tipo Rectangulo, calcular y mostrar sus áreas y perímetros.
+
+### Ejericio: Clase y Objeto con miembros estáticos
+
+Modificar la clase _Estudiante_ previa de forma que tenga los siguientes miembros:
+- Un atributo de clase llamado _estudiantesTotales_ para realizar un seguimiento del número total de estudiantes.
+- Dos atributos de instancia: _nombre_ y _edad_.
+- Un constructor que acepte un nombre y una edad como parámetros y los asigne a las variables de instancia correspondientes.
+- Un método de instancia llamado _presentarse()_ que imprima un mensaje que incluya el nombre y la edad.
+- Un método de clase llamado _getEstudiantesTotales()_ que devuelva el valor actual de _estudiantesTotales_.
+- Un método de clase llamado _agregarEstudiante(nombre, edad)_ que incremente _estudiantesTotales_ en 1 cada vez que se llame y cree una nueva instancia de _Estudiante_ con los parámetros proporcionados.
 
 ### Ejercicio: Ingreso y salida
 Investigando la herramienta _Scanner_ que trae Java, escribir un programa que tenga dos paquetes. 
@@ -607,6 +673,9 @@ Es posible inicializar un arreglo con valores en el momento de la creación:
 ```java
 int[] numeros = {1, 2, 3, 4, 5}; // Inicializa el arreglo con valores
 ```
+```java
+metodo1(int[]{1, 2, 3, 4, 5});  // Inicializa un arreglo como argumento de metodo1
+```
 
 ### Acceso a Elementos
 Los elementos de un arreglo se acceden mediante un índice numérico, comenzando desde 0 para el primer elemento. Por ejemplo, para acceder al tercer elemento del arreglo numeros:
@@ -800,6 +869,32 @@ Los modificadores de acceso permiten controlar el encapsulamiento y la seguridad
 - Usar public para proporcionar una interfaz pública bien definida.
 - Usar protected cuando se desea que las subclases tengan acceso a ciertos miembros.
 - Usar el modificador sin especificar para permitir el acceso dentro del mismo paquete.
+
+### Getters y Setters
+
+En la jerga de la POO podemos identificar ciertos métodos que permiten acceder y modificar atributos una clase. Dado que siempre conviene definir los atributos como privados y así ocultarlos del acceso externo, es una práctica habitual definir métodos para acceder al valor de un atributo (**getters**) y para modificarlo (**setters**). El nombre proviene del prefijo común que suelen tener los nombres de estos métodos.
+
+```java
+public class MiClase {
+    private int campo1;         // Atributo privado sin acceso externo
+
+    public int getCampo1() {    // Getter del atributo campo1
+        return this.campo1;
+    }
+
+    public void setCampo1(int valor) {    // Setter del atributo campo1
+        this.campo1 = valor;
+    }
+}
+```
+
+En el ejemplo podemos ver que la única forma de acceder al _campo1_ desde fuera de la clase es utilizando el método _getCampo1_, mientras que para modificarlo debemos utilizar el método _setCampo1_.
+
+```java
+MiClase obj1 = MiClase();
+obj1.setCampo1(15);
+System.out.println(obj1.getCampo1());   // Muestra el valor de campo1: 15
+```
 
 ## Anotaciones
 Las anotaciones son metadatos que se utilizan para proporcionar información adicional sobre elementos del código fuente, como clases, métodos, variables, etc. Son usualmente utilizadas para documentación, configuración y procesamiento durante la compilación o en tiempo de ejecución. Son etiquetas que se colocan directamente antes de elementos del código fuente. Proporcionan información adicional sobre esos elementos y pueden ser interpretadas por varias herramientas y librerías. Las anotaciones comienzan con el símbolo **@** seguido del nombre de la anotación.
